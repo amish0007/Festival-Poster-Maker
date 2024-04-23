@@ -54,7 +54,7 @@
                 android:id="@+id/txtLogo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Upload Logo"
+                android:text="Upload Logo (*Optional)"
                 android:textColor="@color/black"/>
 
             <androidx.cardview.widget.CardView

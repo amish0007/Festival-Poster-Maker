@@ -4,15 +4,21 @@ import static android.R.*;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,12 +29,22 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class posteredited extends AppCompatActivity {
     int imagePoster;
     ImageView imgEditPoster,imgPEBack;
-    TextView txtSetBusiness,txtSetMobile,txtSetAltMobile,txtSetEmail,txtSetWebsite,txtSetAddress;
+    TextView txtSetBusiness,txtSetMobile,txtSetAltMobile,txtSetEmail,
+            txtSetWebsite,txtSetAddress,txtDownload,txtShare;
     LinearLayout lnrSec1;
     FloatingActionButton editBtn;
+    RelativeLayout relImagePoster;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +52,21 @@ public class posteredited extends AppCompatActivity {
         setContentView(R.layout.activity_posteredited);
         initPE();
         getFinalData();
+
+        txtDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveImage();
+
+                Toast.makeText(posteredited.this, "Image Downloaded", Toast.LENGTH_SHORT).show();
+            }
+        });
+        txtShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                share();
+            }
+        });
 
         imgPEBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,8 +92,11 @@ public class posteredited extends AppCompatActivity {
         txtSetEmail = findViewById(R.id.txtSetEmail);
         txtSetWebsite = findViewById(R.id.txtSetWebsite);
         txtSetAddress = findViewById(R.id.txtSetAddress);
+        txtDownload = findViewById(R.id.txtDownload);
+        txtShare = findViewById(R.id.txtShare);
         lnrSec1 = findViewById(R.id.lnrSec1);
         editBtn = findViewById(R.id.editBtn);
+        relImagePoster = findViewById(R.id.relImagePoster);
     }
     void getFinalData()
     {
@@ -352,5 +386,49 @@ public class posteredited extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
+    }
+
+    Bitmap convertImage()
+    {
+        relImagePoster.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(relImagePoster.getDrawingCache());
+        relImagePoster.setDrawingCacheEnabled(false);
+        return bitmap;
+    }
+    void saveImage()
+    {
+        Bitmap bitmap = convertImage();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("hh_mm_ss_dd_MM_yyyy");
+        Date date = new Date();
+        String image = sdf.format(date);
+
+        File filename = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        String path = filename.getPath()+"/"+image+".png";
+        File file = new File(path);
+
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG,100,fileOutputStream);
+            fileOutputStream.close();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    void share()
+    {
+        Bitmap bitmap = convertImage();
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG,100,bytes);
+        String path = MediaStore.Images.Media.insertImage(getContentResolver(),bitmap,"title",null);
+
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("image/png");
+        Uri imageuri = Uri.parse(path);
+        share.putExtra(Intent.EXTRA_STREAM,imageuri);
+        startActivity(Intent.createChooser(share,"select"));
     }
 }
