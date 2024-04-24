@@ -28,6 +28,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -39,7 +40,7 @@ import java.util.Date;
 
 public class posteredited extends AppCompatActivity {
     int imagePoster;
-    ImageView imgEditPoster,imgPEBack;
+    ImageView imgEditPoster,imgPEBack,PELogo;
     TextView txtSetBusiness,txtSetMobile,txtSetAltMobile,txtSetEmail,
             txtSetWebsite,txtSetAddress,txtDownload,txtShare;
     LinearLayout lnrSec1;
@@ -97,6 +98,7 @@ public class posteredited extends AppCompatActivity {
         lnrSec1 = findViewById(R.id.lnrSec1);
         editBtn = findViewById(R.id.editBtn);
         relImagePoster = findViewById(R.id.relImagePoster);
+        PELogo = findViewById(R.id.PELogo);
     }
     void getFinalData()
     {
@@ -108,7 +110,9 @@ public class posteredited extends AppCompatActivity {
         String PEEmail = DataIntent.getStringExtra("email");
         String PEWebsite = DataIntent.getStringExtra("website");
         String PEAddress = DataIntent.getStringExtra("address");
+        String logoImage = DataIntent.getStringExtra("urlImage");
 
+        Picasso.get().load(logoImage).into(PELogo);
         imgEditPoster.setImageResource(imagePoster);
         txtSetBusiness.setText(PEBusiness);
         txtSetMobile.setText(PEMobile);
@@ -353,7 +357,7 @@ public class posteredited extends AppCompatActivity {
                 txtSetMobile.setTypeface(bebas_neue);
                 txtSetAltMobile.setTypeface(bebas_neue);
                 txtSetEmail.setTypeface(bebas_neue);
-                txtSetWebsite.setTypeface(bebas_neue);
+               txtSetWebsite.setTypeface(bebas_neue);
                 txtSetAddress.setTypeface(bebas_neue);
                 dialog.dismiss();
             }

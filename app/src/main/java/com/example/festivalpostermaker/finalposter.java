@@ -1,6 +1,7 @@
 package com.example.festivalpostermaker;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +22,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.squareup.picasso.Picasso;
 
 public class finalposter extends AppCompatActivity {
 
@@ -34,6 +36,7 @@ public class finalposter extends AppCompatActivity {
     Button btnSubmit;
     int FinalImage;
 
+    Uri uri;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +55,7 @@ public class finalposter extends AppCompatActivity {
         {
             if(url!=null) {
                 imgLogo.setImageURI(url);
-                //uri = url;
+                uri = url;
                 //Use of Picasso
                 //Picasso.get().load(uri).into(imgProfile);
             }
@@ -144,6 +147,7 @@ public class finalposter extends AppCompatActivity {
                     DataIntent.putExtra("email",Email);
                     DataIntent.putExtra("website",Website);
                     DataIntent.putExtra("imageFinal",FinalImage);
+                    DataIntent.putExtra("urlImage",uri.toString());
                     startActivity(DataIntent);
                 }
             }
